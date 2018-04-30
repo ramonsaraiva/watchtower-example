@@ -21,7 +21,10 @@ pyenv local wtex
 
 * Create an `.env` file pointing to the flask entrypoint
 
-`FLASK_APP=wtex.application`
+```
+FLASK_APP=wtex.application
+FLASK_DEBUG=1
+```
 
 * Run flask on port `5001` so we can run `watchtower` on `5000`
 
