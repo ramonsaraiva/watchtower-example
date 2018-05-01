@@ -6,6 +6,7 @@ from flask import (
     Flask,
     request,
     current_app,
+    render_template,
 )
 
 
@@ -43,12 +44,12 @@ def send_pageview(request, response, sk, data):
     send_event(request, response, sk, data)
 
 
-def build_response(app, request, data):
+def build_response(app, request, template, data):
     """
     Builds a response creating a watchtower session key if does not exist.
     The session key contains a hex token of 64 characters.
     """
-    response = app.make_response(data)
+    response = app.make_response(render_template(template, **data))
     value = secrets.token_hex()
     if 'WTSK' not in request.cookies:
         response.set_cookie('WTSK', value=value)
@@ -57,17 +58,8 @@ def build_response(app, request, data):
 
 @app.route('/')
 def index():
-    html = """
-    Welcome to the homepage!
-
-    <ul>
-        <li><a href="/signup/">Sign up</a></li>
-        <li><a href="/login/">Login</a></li>
-        <li><a href="/news/">Read our news</a></li>
-        <li><a href="/about/">About us</a></li>
-    </ul>
-    """
-    response, sk = build_response(current_app, request, html)
+    data = {}
+    response, sk = build_response(current_app, request, 'index.jinja', data)
     send_pageview(request, response, sk, {})
     return response
 
@@ -77,12 +69,8 @@ def signup():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-
-        html = f"""
-        Thanks for signing up {email}!<br/>
-        <a href="/">Go back to the homepage</a>
-        """
-        response, sk = build_response(current_app, request, html)
+        response, sk = build_response(
+            current_app, request, 'thanks.jinja', data={'email': email})
 
         event_data = {
             'uid': email,
@@ -96,38 +84,21 @@ def signup():
         send_event(request, response, sk, event_data)
         return response
 
-    html = """
-    Sign up
-
-    <form method="post" action="/signup/">
-        <input type="email" name="email" value="example@email.com" />
-        <input type="password" name="password" value="password" />
-        <input type="submit" value="Submit" />
-    </form>
-    """
-    response, sk = build_response(current_app, request, html)
+    response, sk = build_response(current_app, request, 'signup.jinja', {})
     send_pageview(request, response, sk, {})
     return response
 
 
-@app.route('/news/')
-@app.route('/news/<slug>/')
-def news(slug=None):
+@app.route('/books/')
+@app.route('/books/<slug>/')
+def books(slug=None):
     if slug:
-        html = f"""
-        <a href="/news/">Back to news</a>
-
-        <h1>{slug}</h1>
-
-        <p>Lorem ipsum dolor amet.</p>
-        <p>Lorem ipsum dolor amet.</p>
-        <p>Lorem ipsum dolor amet.</p>
-        """
-        response, sk = build_response(current_app, request, html)
+        response, sk = build_response(
+            current_app, request, 'book.jinja', {'slug': slug})
         send_pageview(request, response, sk, {})
 
         event_data = {
-            'ec': 'news',
+            'ec': 'books',
             'en': 'read',
             'ed': {
                 'slug': slug,
@@ -137,18 +108,6 @@ def news(slug=None):
         send_event(request, response, sk, event_data)
         return response
 
-    html = """
-    <a href="/">Home</a> | News
-
-    <ul>
-        <li><a href="/news/black-girl/">Black Girl</a></li>
-        <li><a href="/news/the-broken-ice/">The Broken Ice</a></li>
-        <li><a href="/news/shores-of-winter/">Shores of Winter</a></li>
-        <li><a href="/news/the-obsessions-servant/">The Obsession's Servant</a></li>
-        <li><a href="/news/the-voyage-of-the-stars/">The Voyage of the Stars</a></li>
-        <li><a href="/news/destruction-in-the-past/">Destruction in the Past</a></li>
-    </ul>
-    """
-    response, sk = build_response(current_app, request, html)
+    response, sk = build_response(current_app, request, 'books.jinja', {})
     send_pageview(request, response, sk, {})
     return response

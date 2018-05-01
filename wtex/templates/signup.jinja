@@ -1,0 +1,11 @@
+{% extends 'base.jinja' %}
+
+{% block content %}
+    <h2>Sign up</h2>
+
+    <form method="post" action="/signup/">
+        <input type="email" name="email" value="example@email.com" />
+        <input type="password" name="password" value="password" />
+        <input type="submit" value="Submit" />
+    </form>
+{% endblock content %}

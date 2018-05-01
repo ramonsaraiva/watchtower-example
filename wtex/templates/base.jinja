@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+        <title>Watchtower example page</title>
+        <meta name="description" content="Watchtower example page">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <link rel="stylesheet" href="/static/css/styles.css">
+    </head>
+    <body>
+        <header>
+            <h1>Blazing books</h1>
+        </header>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/signup/">Sign up</a></li>
+                <li><a href="/login/">Login</a></li>
+                <li><a href="/books/">Read our books</a></li>
+                <li><a href="/about/">About us</a></li>
+            </ul>
+        </nav>
+        <section>
+            {% block content %}
+            {% endblock content %}
+        </section>
+        <footer>
+        </footer>
+    </body>
+</html>
