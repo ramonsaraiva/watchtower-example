@@ -27,7 +27,7 @@ def send_event(request, response, sk, data):
         'ip': ip,
         'ts': str(time.time()),
     })
-    response = requests.post('http://localhost:5000/event/', json=data)
+    response = requests.post('http://watchtower_app_1:5000/event/', json=data)
     return response
 
 
